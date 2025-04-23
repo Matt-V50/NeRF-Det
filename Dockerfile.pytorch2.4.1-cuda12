@@ -1,0 +1,52 @@
+FROM pytorch/pytorch:2.4.1-cuda12.1-cudnn9-devel
+
+# Set architecture flags for RTX 4090 (Ampere architecture)
+ENV TORCH_CUDA_ARCH_LIST="8.6 8.9 9.0+PTX"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+
+RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6 git ninja-build libglib2.0-0 libsm6 libxrender-dev libxext6 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# No need to reinstall PyTorch as it's already in the base image
+# Install compatible versions of torchvision and mmcv-full
+RUN pip install torchvision
+
+# Install MMCV with CUDA 12.1 support
+# Note: Check for the latest version that supports CUDA 12.1 and PyTorch 2.4.1
+RUN pip install -U openmim
+RUN mim install mmcv<2.2.0
+
+# Install Cython and mmdet
+RUN pip install cython
+RUN pip install mmdet
+
+# Install MMDetection3D
+RUN conda clean --all
+# RUN git clone https://github.com/saic-vul/imvoxelnet.git /mmdetection3d
+RUN git clone https://github.com/Matt-V50/imvoxelnet.git /mmdetection3d
+WORKDIR /mmdetection3d
+ENV FORCE_CUDA="1"
+# RUN sed -i 's/numba==0.48.0/numba/g; s/nuscenes-devkit==1.1.2/nuscenes-devkit/g' ./requirements/runtime.txt
+RUN pip install -r requirements/build.txt
+# RUN sed -i 's/-std=c++14/-std=c++17/g' setup.py
+RUN pip install --no-cache-dir -e .
+
+# Uninstall pycocotools installed by nuscenes-devkit and reinstall mmpycocotools
+RUN pip uninstall pycocotools --no-cache-dir -y
+RUN pip install cython==0.29.33
+RUN pip install mmpycocotools --no-cache-dir --force --no-deps
+
+# Install differentiable IoU
+RUN git clone https://github.com/lilanxiao/Rotated_IoU /rotated_iou
+RUN cp -r /rotated_iou/cuda_op /mmdetection3d/mmdet3d/ops/rotated_iou
+WORKDIR /mmdetection3d/mmdet3d/ops/rotated_iou/cuda_op
+RUN python setup.py install
+
+RUN pip install yapf
+RUN pip install protobuf
+WORKDIR /mmdetection3d
+COPY . /mmdetection3d

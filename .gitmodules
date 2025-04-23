@@ -1,0 +1,6 @@
+[submodule "submodules/mmdetection3d"]
+	path = submodules/mmdetection3d
+	url = https://github.com/saic-vul/imvoxelnet.git
+[submodule "submodules/rotated_iou"]
+	path = submodules/rotated_iou
+	url = https://github.com/lilanxiao/Rotated_IoU

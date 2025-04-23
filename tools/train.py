@@ -7,8 +7,8 @@ import mmcv
 import os
 import time
 import torch
-from mmcv import Config, DictAction
-from mmcv.runner import init_dist
+from mmengine.config import Config, DictAction
+from mmengine.dist import get_dist_info,init_dist
 from os import path as osp
 
 from mmdet3d import __version__
