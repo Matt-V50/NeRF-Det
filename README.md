@@ -3,6 +3,9 @@
 *[Chenfeng Xu](https://chenfengx.com), [Bichen Wu](https://scholar.google.com/citations?user=K3QJPdMAAAAJ&hl=en), [Ji Hou](https://sekunde.github.io), [Sam Tsai](https://scholar.google.com/citations?user=JdE_LFYAAAAJ&hl=zh-CN), [Ruilong Li](https://www.liruilong.cn), [Jialiang Wang](https://scholar.harvard.edu/jwang/home), [Wei Zhan](https://zhanwei.site), [Zijian He](https://scholar.google.com/citations?user=G03EzSMAAAAJ&hl=en), [Peter Vajda](https://sites.google.com/site/vajdap), [Kurt Keutzer](https://people.eecs.berkeley.edu/~keutzer/), [Masayoshi Tomizuka](https://me.berkeley.edu/people/masayoshi-tomizuka/)*
 
 *[[paper]](http://arxiv.org/abs/2307.14620), [[project page]](https://chenfengxu714.github.io/nerfdet/)*
+
+### Update to fit torch2.4.1
+
 <p align="center"><img src="./figures/teaser-cropped.png"></p>
 
 NeRF-Det is a novel method for 3D detection with posed RGB images as input. Our method makes novel use of NeRF in an end-to-end manner to explicitly estimate 3D geometry, thereby improving 3D detection performance. Specifically, to avoid the significant extra latency associated with per-scene optimization of NeRF, we introduce sufficient geometry priors to enhance the generalizability of NeRF-MLP. We subtly connect the detection and NeRF branches through a shared MLP, enabling an efficient adaptation of NeRF to detection and yielding geometry-aware volumetric representations for 3D detection. As a result of our joint-training design, NeRF-Det is able to generalize well to unseen scenes for object detection, view synthesis, and depth estimation tasks without per-scene optimization. 
