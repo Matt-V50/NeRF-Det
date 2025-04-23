@@ -4,6 +4,8 @@ ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+
 RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6 git ninja-build libglib2.0-0 libsm6 libxrender-dev libxext6 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -12,7 +14,11 @@ RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6 git ninja-build 
 RUN pip install torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
 
 # Install MMCV
-RUN pip install mmcv-full==1.2.7+torch1.6.0+cu101 -f https://openmmlab.oss-accelerate.aliyuncs.com/mmcv/dist/index.html
+# RUN pip install mmcv-full==1.2.7+torch1.6.0+cu101 -f https://openmmlab.oss-accelerate.aliyuncs.com/mmcv/dist/index.html
+# RUN python --version 3.7.7
+# RUN conda install -c conda-forge pycocotools
+RUN pip install mmcv-full==1.2.7 -f https://download.openmmlab.com/mmcv/dist/cu101/torch1.6.0/index.html 
+RUN pip install cython==0.29.21
 RUN pip install mmdet==2.10.0
 
 # Install MMDetection
@@ -32,3 +38,8 @@ RUN git clone https://github.com/lilanxiao/Rotated_IoU /rotated_iou
 RUN cp -r /rotated_iou/cuda_op /mmdetection3d/mmdet3d/ops/rotated_iou
 WORKDIR /mmdetection3d/mmdet3d/ops/rotated_iou/cuda_op
 RUN python setup.py install
+
+RUN pip install yapf==0.40.1
+RUN pip install protobuf==3.20.3
+WORKDIR /mmdetection3d
+COPY . /mmdetection3d

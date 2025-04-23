@@ -1,0 +1,23 @@
+services:
+  nerf-det:
+    # image: us-docker.pkg.dev/colab-images/public/runtime
+    container_name: nerf-det
+    build:
+      context: .
+      dockerfile: Dockerfile.pytorch2.4.1-cuda12
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    stdin_open: true  # equivalent to -i
+    tty: true         # equivalent to -t
+    command: tail -f /dev/null
+    shm_size: 8g
+    volumes:
+      - ./submodules/mmdetection3d/data:/mmdetection3d/data
+      - .:/mmdetection3d
